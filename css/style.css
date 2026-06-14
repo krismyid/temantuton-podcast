@@ -563,6 +563,12 @@ body {
   overflow-wrap: break-word;
 }
 
+.episode-card.playing .ep-desc,
+.episode-card.paused .ep-desc {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
 .ep-play-btn {
   width: 42px;
   height: 42px;
