@@ -17,6 +17,9 @@ node_modules/
 
 # Raw podcast audio (hosted on archive.org)
 podcast/source/
+*.m4a
+*.mp3
+*.ogg
 
 # OpenCode internal
 .omo/
