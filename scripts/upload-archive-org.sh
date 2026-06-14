@@ -60,6 +60,7 @@ upload_file() {
     -X PUT \
     -H "Authorization: LOW ${IA_S3_ACCESS_KEY}:${IA_S3_SECRET_KEY}" \
     -H "Content-Type: audio/mp4" \
+    -H "x-amz-auto-make-bucket: 1" \
     -H "X-Archive-Meta-Author: TemanTuton" \
     -H "X-Archive-Meta-Description: TemanTuton - Podcast Belajar untuk Ujian UT" \
     --data-binary "@${filepath}" \
