@@ -15,5 +15,8 @@ Thumbs.db
 # Node
 node_modules/
 
+# Raw podcast audio (hosted on archive.org)
+podcast/source/
+
 # OpenCode internal
 .omo/

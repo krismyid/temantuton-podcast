@@ -15,7 +15,33 @@ Podcast belajar untuk ujian Universitas Terbuka (UT). Dengarkan kapan saja, bahk
 
 ## Adding a New Subject
 
-1. Create `podcast/{Subject Name}/series.json`:
+### 🚀 Quick Way (Automated)
+
+Use the podcast generator script:
+
+```bash
+node scripts/generate-podcast.js "path/to/book.pdf" --code HKUM4101 --name "Hukum Adat"
+```
+
+This will:
+- Auto-detect modules from PDF
+- Generate `notebooklm.md` (podcast prompt with casual Jakarta style)
+- Generate `series.json` (metadata)
+- Create folder structure
+
+Then:
+1. Edit `notebooklm.md` - fill in module details
+2. Generate audio at NotebookLM
+3. Download audio files (names match `series.json`)
+4. Place audio in the subject folder
+5. Run `node scripts/generate-site.js --audio-base "https://archive.org/download/temantuton-podcast/"`
+6. Commit and push
+
+See [PODCAST_GENERATOR.md](PODCAST_GENERATOR.md) for details.
+
+### 📝 Manual Way
+
+1. Create `podcast/source/{Subject Name}/series.json`:
 
 ```json
 {
