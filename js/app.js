@@ -39,6 +39,42 @@ const PODCAST_DATA = [
     ]
   },
   {
+    series: 'Hukum Dagang dan Kepailitan',
+    seriesCode: 'HKUM4207',
+    description: 'Podcast persiapan ujian Hukum Dagang dan Kepailitan UT. Membahas penyehatan perusahaan melalui merger, akuisisi, konsolidasi, serta aspek hukum kepailitan dan PKPU.',
+    tags: ['s1-ilmu-hukum', 'fhisip'],
+    episodes: [
+      {
+        number: 1,
+        title: 'Pengantar Penyehatan Perusahaan & Merger',
+        subtitle: 'Modul 1, 2 & 3',
+        file: 'hukum-dagang-kepailitan-ep1.m4a',
+        description: 'Konsep dasar penyehatan perusahaan, dasar hukum merger, dan tipe-tipe merger (horizontal, vertikal, konglomerat).'
+      },
+      {
+        number: 2,
+        title: 'Akuisisi (Pengambilalihan Perusahaan)',
+        subtitle: 'Modul 4, 5 & 6',
+        file: 'hukum-dagang-kepailitan-ep2.m4a',
+        description: 'Pengertian akuisisi, bentuk-bentuk akuisisi (stock vs asset), prosedur dan implikasi hukum pengambilalihan.'
+      },
+      {
+        number: 3,
+        title: 'Konsolidasi & Praktik Penyehatan Lainnya',
+        subtitle: 'Modul 7, 8 & 9',
+        file: 'hukum-dagang-kepailitan-ep3.m4a',
+        description: 'Peleburan (konsolidasi), tata cara konsolidasi, serta praktik LBO, MBO, dan joint venture.'
+      },
+      {
+        number: 4,
+        title: 'Aspek Hukum Kepailitan & Evaluasi',
+        subtitle: 'Modul 10, 11 & 12',
+        file: 'hukum-dagang-kepailitan-ep4.m4a',
+        description: 'Kepailitan dan PKPU, aspek hukum perdata internasional, rangkuman materi dan soal-soal formatif.'
+      },
+    ]
+  },
+  {
     series: 'Tindak Pidana Korupsi',
     seriesCode: 'ISBU4216',
     description: 'Podcast persiapan ujian Tindak Pidana Korupsi UT. Sesi belajar interaktif soal latihan dan tes formatif.',
