@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Upload audio files to archive.org via S3 API (CI-friendly)
-# Designed for GitHub Actions but works locally with .env
+# Upload audio files to archive.org via S3 API
+# Only overwrites if local file is newer than remote
 #
 # Usage: ./scripts/upload-archive-org.sh [--dry-run]
 #
@@ -42,7 +42,43 @@ fi
 # Collect audio files (handles spaces in paths)
 UPLOAD_COUNT=0
 SKIP_COUNT=0
+OVERWRITE_COUNT=0
 FAIL_COUNT=0
+
+# Convert archive.org Last-Modified header to Unix timestamp
+# Archive.org returns: "Mon, 01 Jan 2024 00:00:00 GMT"
+http_date_to_epoch() {
+  local http_date="$1"
+  # Use GNU date or BSD date depending on platform
+  if date --version 2>/dev/null | grep -q GNU; then
+    date -d "$http_date" +%s 2>/dev/null || echo "0"
+  else
+    # macOS / BSD
+    date -j -f "%a, %d %b %Y %H:%M:%S %Z" "$http_date" +%s 2>/dev/null || echo "0"
+  fi
+}
+
+check_remote_date() {
+  local remote="$1"
+  local http_code
+  local last_modified
+
+  http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+    -I \
+    -H "Authorization: LOW ${IA_S3_ACCESS_KEY}:${IA_S3_SECRET_KEY}" \
+    "${S3_URL}/${remote}" 2>/dev/null) || true
+
+  if [ "$http_code" = "200" ]; then
+    last_modified=$(curl -s -I \
+      -H "Authorization: LOW ${IA_S3_ACCESS_KEY}:${IA_S3_SECRET_KEY}" \
+      "${S3_URL}/${remote}" 2>/dev/null | grep -i "^Last-Modified:" | sed 's/Last-Modified: *//i' | tr -d '\r')
+    if [ -n "$last_modified" ]; then
+      http_date_to_epoch "$last_modified"
+      return
+    fi
+  fi
+  echo "0"
+}
 
 upload_file() {
   local filepath="$1"
@@ -53,6 +89,25 @@ upload_file() {
   if $DRY_RUN; then
     echo "[DRY RUN]"
     return 0
+  fi
+
+  # Get local file mtime
+  local local_mtime
+  local_mtime=$(stat -c %Y "$filepath" 2>/dev/null || stat -f %m "$filepath" 2>/dev/null)
+
+  # Check if remote file exists and get its mtime
+  local remote_mtime
+  remote_mtime=$(check_remote_date "$remote")
+
+  if [ "$remote_mtime" != "0" ]; then
+    # Remote exists — compare timestamps
+    if [ "$local_mtime" -le "$remote_mtime" ]; then
+      echo "SKIP (remote newer or same)"
+      SKIP_COUNT=$((SKIP_COUNT + 1))
+      return 0
+    else
+      echo -n "OVERWRITE (local newer) ... "
+    fi
   fi
 
   local http_code
@@ -67,8 +122,13 @@ upload_file() {
     "${S3_URL}/${remote}" 2>/dev/null) || true
 
   if [ "$http_code" = "200" ] || [ "$http_code" = "201" ] || [ "$http_code" = "204" ]; then
-    echo "OK ($http_code)"
-    UPLOAD_COUNT=$((UPLOAD_COUNT + 1))
+    if [ "$remote_mtime" != "0" ]; then
+      echo "OK (overwritten)"
+      OVERWRITE_COUNT=$((OVERWRITE_COUNT + 1))
+    else
+      echo "OK (uploaded)"
+      UPLOAD_COUNT=$((UPLOAD_COUNT + 1))
+    fi
   else
     echo "FAILED ($http_code)"
     FAIL_COUNT=$((FAIL_COUNT + 1))
@@ -110,7 +170,7 @@ done
 
 echo ""
 echo "=== Summary ==="
-echo "Uploaded: ${UPLOAD_COUNT}  Failed: ${FAIL_COUNT}  Skipped: ${SKIP_COUNT}"
+echo "Uploaded: ${UPLOAD_COUNT}  Overwritten: ${OVERWRITE_COUNT}  Skipped: ${SKIP_COUNT}  Failed: ${FAIL_COUNT}"
 echo "Download URL: https://archive.org/download/${IA_IDENTIFIER}/"
 echo "Item page:    https://archive.org/details/${IA_IDENTIFIER}"
 
