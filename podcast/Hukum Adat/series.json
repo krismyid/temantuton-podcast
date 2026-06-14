@@ -1,0 +1,28 @@
+{
+  "code": "FSIH4206",
+  "description": "Podcast persiapan ujian Hukum Adat UT. Deep dive latihan soal dan tes formatif.",
+  "prefix": "hukum-adat",
+  "episodes": [
+    {
+      "number": 1,
+      "title": "Dari Adat Sampai Sejarah",
+      "subtitle": "Modul 1 & 2",
+      "file": "ep1-modul1-2.m4a",
+      "description": "Asas-asas hukum adat, istilah dan pengertian, corak dan sifat, sistem hukum adat vs Barat, masyarakat hukum adat, 19 lingkungan Van Vollenhoven."
+    },
+    {
+      "number": 2,
+      "title": "Orang, Pribadi, dan Keluarga",
+      "subtitle": "Modul 3 & 4",
+      "file": "ep2-modul3-4.m4a",
+      "description": "Hukum tentang orang/pribadi, kecakapan bertindak, dewasa menurut hukum adat vs UU, hukum keluarga dan kekerabatan, sistem patrilineal/matrilineal/parental."
+    },
+    {
+      "number": 3,
+      "title": "Kawin, Harta, dan Eksistensi Hukum Adat",
+      "subtitle": "Modul 5 & 6",
+      "file": "ep3-modul5-6.m4a",
+      "description": "Hukum perkawinan, bentuk-bentuk perkawinan, harta perkawinan, eksistensi hukum adat dalam hukum nasional, the living law."
+    }
+  ]
+}

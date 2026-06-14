@@ -1,0 +1,25 @@
+# Secrets
+.env
+.env.local
+
+# Audio files (uploaded to archive.org, not in git)
+# series.json is kept — only audio binaries excluded
+podcast/**/*.m4a
+podcast/**/*.mp3
+podcast/**/*.ogg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
+
+# OpenCode internal
+.omo/

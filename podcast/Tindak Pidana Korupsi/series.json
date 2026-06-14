@@ -1,0 +1,35 @@
+{
+  "code": "ISBU4216",
+  "description": "Podcast persiapan ujian Tindak Pidana Korupsi UT. Sesi belajar interaktif soal latihan dan tes formatif.",
+  "prefix": "tipikor",
+  "episodes": [
+    {
+      "number": 1,
+      "title": "Istilah, Sejarah, dan Hukum Positif",
+      "subtitle": "Modul 1 & 2",
+      "file": "ep1-modul1-2.m4a",
+      "description": "Pengertian korupsi, tipologi korupsi, dampak destruktif, sejarah undang-undang pemberantasan korupsi di Indonesia."
+    },
+    {
+      "number": 2,
+      "title": "Sifat Melawan Hukum dan Sistem Pemidanaan",
+      "subtitle": "Modul 3 & 4",
+      "file": "ep2-modul3-4.m4a",
+      "description": "Sifat melawan hukum (materiil dan formil), pemidanaan korporasi, pidana pokok, pidana tambahan, dan pidana mati dalam UU Tipikor."
+    },
+    {
+      "number": 3,
+      "title": "Hukum Acara Khusus dan Lembaga Penegak Hukum",
+      "subtitle": "Modul 5 & 6",
+      "file": "ep3-modul5-6.m4a",
+      "description": "Hukum acara khusus, pembuktian terbalik, peradilan in absentia, bukti elektronik, kewenangan KPK, Kepolisian, dan Kejaksaan."
+    },
+    {
+      "number": 4,
+      "title": "Pengembalian Aset, Peran Masyarakat, UNCAC, dan TPPU",
+      "subtitle": "Modul 7, 8 & 9",
+      "file": "ep4-modul7-8-9.m4a",
+      "description": "Mekanisme pengembalian aset (StAR), bantuan timbal balik (MLA), peran serta masyarakat, hubungan korupsi dengan TPPU."
+    }
+  ]
+}

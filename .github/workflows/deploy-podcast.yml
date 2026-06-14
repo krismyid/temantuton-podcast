@@ -1,0 +1,45 @@
+name: Deploy Podcast
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'podcast/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Upload audio to archive.org
+        env:
+          IA_S3_ACCESS_KEY: ${{ secrets.IA_S3_ACCESS_KEY }}
+          IA_S3_SECRET_KEY: ${{ secrets.IA_S3_SECRET_KEY }}
+          IA_IDENTIFIER: temantuton-podcast
+        run: bash scripts/upload-archive-org.sh
+
+      - name: Rebuild site data from series.json files
+        run: node scripts/generate-site.js --audio-base "https://archive.org/download/temantuton-podcast/"
+
+      - name: Remove audio files from repo
+        run: |
+          find podcast -name '*.m4a' -print -delete || true
+          find podcast -name '*.mp3' -print -delete || true
+          find podcast -name '*.ogg' -print -delete || true
+          echo "Audio files removed from repo (already uploaded to archive.org)"
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "auto: regenerate site & remove uploaded audio [skip ci]"
+          file_pattern: "js/app.js podcast/**/*.m4a podcast/**/*.mp3 podcast/**/*.ogg"

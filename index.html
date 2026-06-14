@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f0f0f">
+  <title>TemanTuton — Podcast Belajar untuk Ujian UT</title>
+  <meta name="description" content="Podcast belajar untuk ujian Universitas Terbuka. Dengarkan kapan saja, bahkan di latar belakang.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="apple-touch-icon" href="img/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🎧</span>
+        <div class="logo-text">
+          <h1>TemanTuton</h1>
+          <p class="tagline">Podcast Belajar untuk Ujian UT</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content" id="content">
+    <!-- Rendered by JS -->
+  </main>
+
+  <!-- Bottom Player -->
+  <div class="player" id="player" aria-hidden="true">
+    <div class="player-progress" id="playerProgress">
+      <div class="player-progress-bar" id="playerProgressBar"></div>
+      <div class="player-progress-handle" id="playerProgressHandle"></div>
+    </div>
+    <div class="player-inner">
+      <div class="player-info" id="playerInfo">
+        <span class="player-series" id="playerSeries"></span>
+        <span class="player-title" id="playerTitle">Pilih episode untuk mulai</span>
+      </div>
+      <div class="player-controls">
+        <button class="player-btn" id="btnRewind" aria-label="Mundur 15 detik" title="Mundur 15 detik">
+          <svg viewBox="0 0 24 24" width="28" height="28"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.19 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z" fill="currentColor"/></svg>
+        </button>
+        <button class="player-btn player-btn-play" id="btnPlay" aria-label="Putar" title="Putar">
+          <svg viewBox="0 0 24 24" width="36" height="36"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        </button>
+        <button class="player-btn" id="btnForward" aria-label="Maju 15 detik" title="Maju 15 detik">
+          <svg viewBox="0 0 24 24" width="28" height="28"><path d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6v4l5-5-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8h-2z" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="player-time">
+        <span id="playerCurrentTime">0:00</span>
+        <span class="time-separator">/</span>
+        <span id="playerDuration">0:00</span>
+      </div>
+      <div class="player-speed">
+        <button class="speed-btn" id="btnSpeed" aria-label="Kecepatan putar" title="Kecepatan putar">1x</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="audio" preload="none"></audio>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
