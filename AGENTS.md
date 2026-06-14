@@ -10,20 +10,12 @@ All UI text is in **Bahasa Indonesia**.
 
 ```
 podcast/                    ← Audio + metadata source of truth
+  tags.json                 ← Tag label definitions (slug → display label)
   Subject Name/
     series.json             ← Metadata (REQUIRED for each subject)
     ep1-modul1-2.m4a         ← Audio files (gitignored, uploaded to archive.org)
     ep2-modul3-4.m4a
     ...
-scripts/
-  generate-site.js          ← Reads series.json files → regenerates js/app.js
-  upload-archive-org.sh     ← Uploads .m4a files to archive.org S3 API
-.github/workflows/
-  deploy-podcast.yml        ← CI: upload → regenerate → clean audio from repo
-  deploy-site.yml           ← CI: deploy to GitHub Pages
-js/app.js                  ← Generated from series.json (DO NOT hand-edit PODCAST_DATA)
-css/style.css               ← Styles
-index.html                  ← Main page
 ```
 
 ## How to Add a New Podcast Subject
@@ -38,6 +30,7 @@ When a user wants to add a new subject (e.g., "Pendidikan Kewarganegaraan"):
   "code": "MKDU4110",
   "description": "Podcast persiapan ujian Pendidikan Kewarganegaraan UT.",
   "prefix": "pkn",
+  "tags": ["s1-ilmu-hukum", "fhisip"],
   "episodes": [
     {
       "number": 1,
@@ -61,12 +54,24 @@ When a user wants to add a new subject (e.g., "Pendidikan Kewarganegaraan"):
 | `code` | Yes | UT course code (e.g., `FSIH4206`, `ISBU4216`) |
 | `description` | Yes | Series description in Bahasa Indonesia |
 | `prefix` | Yes | URL-safe prefix for filenames (e.g., `hukum-adat`, `tipikor`). Used as: `{prefix}-{episode.file}` |
+| `tags` | No | Array of tag slugs (from `tags.json`) for filtering (e.g., `["s1-ilmu-hukum", "fhisip"]`) |
 | `episodes` | Yes | Array of episode objects |
 | `episodes[].number` | Yes | Episode number (1, 2, 3...) |
 | `episodes[].title` | Yes | Episode title in Bahasa Indonesia |
 | `episodes[].subtitle` | No | Module coverage label (e.g., "Modul 1 & 2") |
 | `episodes[].file` | Yes | Audio filename as it exists locally (e.g., `ep1-modul1-2.m4a`). Remote filename becomes `{prefix}-{file}` |
 | `episodes[].description` | Yes | Short description of episode content |
+
+### tags.json Format
+
+```json
+{
+  "s1-ilmu-hukum": "S1 Ilmu Hukum",
+  "fhisip": "FHISIP"
+}
+```
+
+Keys are URL-safe slugs, values are display labels shown in the filter UI.
 
 ### File Naming Conventions
 
@@ -103,14 +108,14 @@ Set in GitHub repo → Settings → Secrets and variables → Actions:
 - **Audio hosting**: archive.org S3. Download URL format: `https://archive.org/download/temantuton-podcast/{prefix}-{filename}`
 - **Background playback**: Media Session API in `js/app.js` (iOS Safari + Android Chrome lock-screen controls)
 - **Client-side storage**: IndexedDB (`TemanTutonDB`) for progress tracking and "Lanjutkan Mendengar" feature
-- **Subject filter**: Horizontal pill bar generated from PODCAST_DATA at render time
+- **Filtering**: Tag pills + series pills in filter bar; search input filters by text across series and episodes
 - **`AUDIO_BASE`** in `js/app.js`: Controlled by `generate-site.js`. For local dev with local files, run `node scripts/generate-site.js` (no `--audio-base` flag) to set it to `''`
 
 ## Files NOT to Hand-Edit
 
 | File | Why |
 |------|-----|
-| `js/app.js` | PODCAST_DATA block is auto-generated. Other code (player, IndexedDB, filters) is safe to edit. |
+| `js/app.js` | PODCAST_DATA and TAGS_MAP blocks are auto-generated. Other code (player, IndexedDB, filters) is safe to edit. |
 | `.env` | Contains secrets, gitignored. Never commit. |
 
 ## When Editing

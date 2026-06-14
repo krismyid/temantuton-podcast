@@ -2,6 +2,7 @@
   "code": "ISBU4216",
   "description": "Podcast persiapan ujian Tindak Pidana Korupsi UT. Sesi belajar interaktif soal latihan dan tes formatif.",
   "prefix": "tipikor",
+  "tags": ["s1-ilmu-hukum", "fhisip"],
   "episodes": [
     {
       "number": 1,

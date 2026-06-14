@@ -2,6 +2,7 @@
   "code": "FSIH4206",
   "description": "Podcast persiapan ujian Hukum Adat UT. Deep dive latihan soal dan tes formatif.",
   "prefix": "hukum-adat",
+  "tags": ["s1-ilmu-hukum", "fhisip"],
   "episodes": [
     {
       "number": 1,

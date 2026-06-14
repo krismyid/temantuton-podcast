@@ -3,11 +3,17 @@
 // For local development with files in podcast/: set to ''
 const AUDIO_BASE = 'https://archive.org/download/temantuton-podcast/';
 
+const TAGS_MAP = {
+  's1-ilmu-hukum': 'S1 Ilmu Hukum',
+  'fhisip': 'FHISIP'
+};
+
 const PODCAST_DATA = [
   {
     series: 'Hukum Adat',
     seriesCode: 'FSIH4206',
     description: 'Podcast persiapan ujian Hukum Adat UT. Deep dive latihan soal dan tes formatif.',
+    tags: ['s1-ilmu-hukum', 'fhisip'],
     episodes: [
       {
         number: 1,
@@ -36,6 +42,7 @@ const PODCAST_DATA = [
     series: 'Tindak Pidana Korupsi',
     seriesCode: 'ISBU4216',
     description: 'Podcast persiapan ujian Tindak Pidana Korupsi UT. Sesi belajar interaktif soal latihan dan tes formatif.',
+    tags: ['s1-ilmu-hukum', 'fhisip'],
     episodes: [
       {
         number: 1,
@@ -77,7 +84,8 @@ let currentEpisode = null;
 let currentSeries = null;
 let isPlaying = false;
 let speedIndex = 2; // default 1x
-let activeFilter = 'semua'; // 'semua' or series name
+let activeFilter = 'semua'; // 'semua', a tag id, or a series name
+let searchQuery = '';
 
 // ===== IndexedDB for Continue Listening =====
 const DB_NAME = 'TemanTutonDB';
@@ -189,6 +197,10 @@ function getAudioUrl(file) {
   return AUDIO_BASE + file;
 }
 
+function escapeHTML(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function findEpisode(seriesName, epNumber) {
   const series = PODCAST_DATA.find(s => s.series === seriesName);
   if (!series) return null;
@@ -210,9 +222,22 @@ async function loadProgressCache() {
 function renderContent() {
   let html = '';
 
-  // Subject filter pills
+  html += '<div class="search-bar">';
+  html += '  <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>';
+  html += `  <input type="text" id="searchInput" class="search-input" placeholder="Cari episode atau mata kuliah..." value="${escapeHTML(searchQuery)}">`;
+  if (searchQuery) {
+    html += '  <button class="search-clear" id="searchClear" aria-label="Hapus pencarian">&times;</button>';
+  }
+  html += '</div>';
+
+  const allTags = [...new Set(PODCAST_DATA.flatMap(s => s.tags || []))];
+
   html += '<div class="filter-bar" id="filterBar">';
   html += `<button class="filter-pill ${activeFilter === 'semua' ? 'active' : ''}" data-filter="semua">Semua</button>`;
+  allTags.forEach(tag => {
+    const label = TAGS_MAP[tag] || tag;
+    html += `<button class="filter-pill filter-pill-tag ${activeFilter === tag ? 'active' : ''}" data-filter="${tag}" data-filter-type="tag">${label}</button>`;
+  });
   PODCAST_DATA.forEach(series => {
     html += `<button class="filter-pill ${activeFilter === series.series ? 'active' : ''}" data-filter="${series.series}">${series.series}</button>`;
   });
@@ -223,13 +248,33 @@ function renderContent() {
 
   // Series sections
   PODCAST_DATA.forEach((series, si) => {
-    const isVisible = activeFilter === 'semua' || activeFilter === series.series;
-    const isOpen = activeFilter === series.series || (activeFilter === 'semua' && si === 0);
+    const matchesFilter = activeFilter === 'semua'
+      || activeFilter === series.series
+      || (series.tags || []).includes(activeFilter);
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch = !q
+      || series.series.toLowerCase().includes(q)
+      || series.seriesCode.toLowerCase().includes(q)
+      || series.description.toLowerCase().includes(q)
+      || (series.tags || []).some(t => (TAGS_MAP[t] || t).toLowerCase().includes(q) || t.toLowerCase().includes(q))
+      || series.episodes.some(ep =>
+          ep.title.toLowerCase().includes(q)
+          || (ep.subtitle || '').toLowerCase().includes(q)
+          || ep.description.toLowerCase().includes(q)
+        );
+    const isVisible = matchesFilter && matchesSearch;
+    const isOpen = isVisible && (activeFilter === series.series || (series.tags || []).includes(activeFilter) || (activeFilter === 'semua' && si === 0 && !q));
+    const tagBadges = (series.tags || []).map(t =>
+      `<span class="series-tag" data-tag="${t}">${TAGS_MAP[t] || t}</span>`
+    ).join('');
     html += `
       <section class="series-section ${isVisible ? '' : 'filtered-out'}" data-series="${si}">
         <div class="series-header" data-series="${si}" role="button" tabindex="0" aria-expanded="${isOpen}">
           <div class="series-header-left">
-            <div class="series-title">${series.series}</div>
+            <div class="series-title-row">
+              <div class="series-title">${series.series}</div>
+              <div class="series-tags">${tagBadges}</div>
+            </div>
             <div class="series-code">${series.seriesCode}</div>
             <div class="series-desc">${series.description}</div>
           </div>
@@ -239,6 +284,11 @@ function renderContent() {
         </div>
         <div class="series-episodes ${isOpen ? '' : 'collapsed'}" data-episodes="${si}">
           ${series.episodes.map((ep) => {
+            const epMatchesSearch = !q
+              || ep.title.toLowerCase().includes(q)
+              || (ep.subtitle || '').toLowerCase().includes(q)
+              || ep.description.toLowerCase().includes(q);
+            if (!epMatchesSearch && q) return '';
             const progId = `${series.series}::${ep.number}`;
             const prog = progressCache[progId];
             const progressPct = prog ? Math.round(prog.progress * 100) : 0;
@@ -279,6 +329,43 @@ function renderContent() {
     });
   });
 
+  // Bind tag clicks on series headers
+  document.querySelectorAll('.series-tag').forEach(tag => {
+    tag.addEventListener('click', (e) => {
+      e.stopPropagation();
+      activeFilter = tag.dataset.tag;
+      renderContent();
+    });
+  });
+
+  // Bind search input
+  const searchInput = document.getElementById('searchInput');
+  const searchClear = document.getElementById('searchClear');
+
+  if (searchInput) {
+    let searchTimeout;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchQuery = searchInput.value;
+        renderContent();
+      }, 200);
+    });
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        searchQuery = '';
+        renderContent();
+      }
+    });
+  }
+
+  if (searchClear) {
+    searchClear.addEventListener('click', () => {
+      searchQuery = '';
+      renderContent();
+    });
+  }
+
   // Bind series toggle
   document.querySelectorAll('.series-header').forEach(header => {
     header.addEventListener('click', () => toggleSeries(header.dataset.series));
@@ -295,6 +382,15 @@ function renderContent() {
 
   // Bind continue section
   renderContinueSection();
+
+  // Restore search focus after re-render
+  if (searchQuery) {
+    const input = document.getElementById('searchInput');
+    if (input) {
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
+  }
 }
 
 function bindEpisodeCards() {
