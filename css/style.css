@@ -741,3 +741,28 @@ body {
   background: var(--accent);
   color: #fff;
 }
+
+/* ===== Footer ===== */
+.site-footer {
+  max-width: 800px;
+  margin: 48px auto 0;
+  padding: 20px 16px 32px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.site-footer p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.site-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
