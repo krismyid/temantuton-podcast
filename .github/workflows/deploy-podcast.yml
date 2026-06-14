@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,15 +34,14 @@ jobs:
       - name: Rebuild site data from series.json files
         run: node scripts/generate-site.js --audio-base "https://archive.org/download/temantuton-podcast/"
 
-      - name: Remove audio files from repo
+      - name: Remove audio files and commit
         run: |
-          find podcast -name '*.m4a' -print -delete || true
-          find podcast -name '*.mp3' -print -delete || true
-          find podcast -name '*.ogg' -print -delete || true
-          echo "Audio files removed from repo (already uploaded to archive.org)"
-
-      - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "auto: regenerate site & remove uploaded audio [skip ci]"
-          file_pattern: "js/app.js podcast/**/*.m4a podcast/**/*.mp3 podcast/**/*.ogg"
+          find podcast -name '*.m4a' -delete 2>/dev/null || true
+          find podcast -name '*.mp3' -delete 2>/dev/null || true
+          find podcast -name '*.ogg' -delete 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "auto: regenerate site & remove uploaded audio [skip ci]"
+          git push
