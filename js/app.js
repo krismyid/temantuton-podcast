@@ -82,10 +82,10 @@ const PODCAST_DATA = [
     episodes: [
       {
         number: 1,
-        title: 'Mahakami Konstitusi Sang Wasit Hukum',
+        title: 'Mahkamah Konstitusi Sang Wasit Hukum',
         subtitle: 'Episode 1',
         file: 'pengujian-peruu-ep1.m4a',
-        description: 'Peran dan fungsi Mahakami Konstitusi dalam sistem ketatanegaraan Indonesia.'
+        description: 'Peran dan fungsi Mahkamah Konstitusi dalam sistem ketatanegaraan Indonesia.'
       },
       {
         number: 2,
