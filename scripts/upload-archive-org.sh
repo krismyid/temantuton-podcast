@@ -60,18 +60,20 @@ http_date_to_epoch() {
 
 check_remote_date() {
   local remote="$1"
-  local http_code
-  local last_modified
 
-  http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+  # Single HEAD request — get both status code and Last-Modified header
+  local response
+  response=$(curl -s --max-time 30 \
     -I \
     -H "Authorization: LOW ${IA_S3_ACCESS_KEY}:${IA_S3_SECRET_KEY}" \
     "${S3_URL}/${remote}" 2>/dev/null) || true
 
+  local http_code
+  http_code=$(echo "$response" | grep -i "^HTTP/" | tail -1 | awk '{print $2}')
+
   if [ "$http_code" = "200" ]; then
-    last_modified=$(curl -s -I \
-      -H "Authorization: LOW ${IA_S3_ACCESS_KEY}:${IA_S3_SECRET_KEY}" \
-      "${S3_URL}/${remote}" 2>/dev/null | grep -i "^Last-Modified:" | sed 's/Last-Modified: *//i' | tr -d '\r')
+    local last_modified
+    last_modified=$(echo "$response" | grep -i "^Last-Modified:" | sed 's/Last-Modified: *//i' | tr -d '\r' | head -1)
     if [ -n "$last_modified" ]; then
       http_date_to_epoch "$last_modified"
       return
@@ -111,7 +113,7 @@ upload_file() {
   fi
 
   local http_code
-  http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+  http_code=$(curl -s --max-time 600 \
     -X PUT \
     -H "Authorization: LOW ${IA_S3_ACCESS_KEY}:${IA_S3_SECRET_KEY}" \
     -H "Content-Type: audio/mp4" \
