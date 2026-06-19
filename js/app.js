@@ -75,6 +75,49 @@ const PODCAST_DATA = [
     ]
   },
   {
+    series: 'Pengujian Peraturan Perundang-Undangan',
+    seriesCode: 'FSIH4310',
+    description: 'Podcast persiapan ujian Pengujian Peraturan Perundang-Undangan UT.',
+    tags: ['s1-ilmu-hukum', 'fhisip'],
+    episodes: [
+      {
+        number: 1,
+        title: 'Mahkamah Konstitusi Sang Wasit Hukum',
+        subtitle: 'Episode 1',
+        file: 'pengujian-peruu-ep1__Mahkamah_Konstitusi_Sang_Wasit_Hukum.m4a',
+        description: 'Peran dan fungsi Mahkamah Konstitusi dalam sistem ketatanegaraan Indonesia.'
+      },
+      {
+        number: 2,
+        title: 'Siasat Politik di Puncak Piramida Peradilan',
+        subtitle: 'Episode 2',
+        file: 'pengujian-peruu-ep2__Siasat_Politik_di_Puncak_Piramida_Peradilan.m4a',
+        description: 'Dinamika politik di balik proses pengujian undang-undang.'
+      },
+      {
+        number: 3,
+        title: 'Hak Rakyat Menggugat Lampiran Undang-Undang',
+        subtitle: 'Episode 3',
+        file: 'pengujian-peruu-ep3__Hak_Rakyat_Menggugat_Lampiran_Undang-Undang.m4a',
+        description: 'Hak masyarakat untuk mengajukan pengujian peraturan perundang-undangan.'
+      },
+      {
+        number: 4,
+        title: 'Cara Menggugat Peraturan Daerah ke Mahkamah Agung',
+        subtitle: 'Episode 4',
+        file: 'pengujian-peruu-ep4__Cara_Menggugat_Peraturan_Daerah_ke_Mahkamah_Agung.m4a',
+        description: 'Prosedur pengujian peraturan daerah di Mahkamah Agung.'
+      },
+      {
+        number: 0,
+        title: 'Sembilan Hakim yang Bisa Membatalkan Undang-Undang',
+        subtitle: 'Bonus',
+        file: 'pengujian-peruu-Bonus__Sembilan_Hakim_yang_Bisa_Membatalkan_Undang-Undang.m4a',
+        description: 'Profil sembilan hakim konstitusi dan kewenangan membatalkan UU.'
+      },
+    ]
+  },
+  {
     series: 'Tindak Pidana Korupsi',
     seriesCode: 'ISBU4216',
     description: 'Podcast persiapan ujian Tindak Pidana Korupsi UT. Sesi belajar interaktif soal latihan dan tes formatif.',
