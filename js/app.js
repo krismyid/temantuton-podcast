@@ -251,8 +251,8 @@ const playerTitle = document.getElementById('playerTitle');
 const playerCurrentTime = document.getElementById('playerCurrentTime');
 const playerDuration = document.getElementById('playerDuration');
 const btnPlay = document.getElementById('btnPlay');
-const btnRewind = document.getElementById('btnRewind');
-const btnForward = document.getElementById('btnForward');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
 const btnSpeed = document.getElementById('btnSpeed');
 const content = document.getElementById('content');
 
@@ -698,6 +698,20 @@ function updateMediaSession() {
   navigator.mediaSession.setActionHandler('seekforward', (details) => {
     audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + (details.seekOffset || 15));
   });
+  navigator.mediaSession.setActionHandler('previoustrack', () => {
+    if (!currentEpisode || !currentSeries) return;
+    const idx = currentSeries.episodes.findIndex(e => e.number === currentEpisode.number);
+    if (idx > 0) {
+      playEpisode(PODCAST_DATA.indexOf(currentSeries), currentSeries.episodes[idx - 1].number);
+    }
+  });
+  navigator.mediaSession.setActionHandler('nexttrack', () => {
+    if (!currentEpisode || !currentSeries) return;
+    const idx = currentSeries.episodes.findIndex(e => e.number === currentEpisode.number);
+    if (idx >= 0 && idx < currentSeries.episodes.length - 1) {
+      playEpisode(PODCAST_DATA.indexOf(currentSeries), currentSeries.episodes[idx + 1].number);
+    }
+  });
   navigator.mediaSession.setActionHandler('seekto', (details) => {
     if (details.fastSeek && 'fastSeek' in audio) {
       audio.fastSeek(details.seekTime);
@@ -782,14 +796,20 @@ audio.addEventListener('timeupdate', () => {
 // ===== Player Controls =====
 btnPlay.addEventListener('click', togglePlayPause);
 
-btnRewind.addEventListener('click', () => {
-  if (!currentEpisode) return;
-  audio.currentTime = Math.max(0, audio.currentTime - 15);
+btnPrev.addEventListener('click', () => {
+  if (!currentEpisode || !currentSeries) return;
+  const idx = currentSeries.episodes.findIndex(e => e.number === currentEpisode.number);
+  if (idx > 0) {
+    playEpisode(PODCAST_DATA.indexOf(currentSeries), currentSeries.episodes[idx - 1].number);
+  }
 });
 
-btnForward.addEventListener('click', () => {
-  if (!currentEpisode) return;
-  audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 15);
+btnNext.addEventListener('click', () => {
+  if (!currentEpisode || !currentSeries) return;
+  const idx = currentSeries.episodes.findIndex(e => e.number === currentEpisode.number);
+  if (idx >= 0 && idx < currentSeries.episodes.length - 1) {
+    playEpisode(PODCAST_DATA.indexOf(currentSeries), currentSeries.episodes[idx + 1].number);
+  }
 });
 
 // Speed control
